@@ -3,97 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belgo Admin | Control Center</title>
+    <title>Jewellery Admin | Control Center</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
-        :root { --belgo: #8CC63E; --pop: #FF9800; --red: #ff4757; --dark: #2d3436; }
-        body { font-family: 'Poppins', sans-serif; background: #f0f2f5; padding: 20px; color: #333; margin: 0; }
+        :root { --gold: #bf9b30; --gold-dark: #8c6f1f; --red: #ff4757; --dark: #1a1a1a; }
+        body { font-family: 'Inter', sans-serif; background: #fdfaf0; padding: 20px; color: #333; margin: 0; }
         .container { max-width: 600px; margin: auto; padding-bottom: 50px; }
         
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; border-top: 6px solid var(--belgo); }
-        .card.pop-card { border-top-color: var(--pop); }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; border-top: 5px solid var(--gold); }
         
-        h2 { margin-top: 0; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; color: var(--dark); }
-        input, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 14px; outline: none; }
+        h2 { margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; color: var(--dark); text-transform: uppercase; letter-spacing: 1px; }
+        input, button, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
         
-        button { border: none; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-green { background: var(--belgo); }
-        .btn-green:hover { background: #7ab334; }
-        .btn-orange { background: var(--pop); }
-        .btn-orange:hover { background: #e68a00; }
-        .btn-red { background: var(--red); padding: 6px 12px; width: auto; font-size: 11px; border-radius: 8px; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
+        button { border: none; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); }
+        .btn-gold:hover { opacity: 0.9; }
+        .btn-red { background: var(--red); padding: 5px 10px; width: auto; font-size: 11px; border-radius: 5px; }
         
-        /* List Management Styling */
         .item-list { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
-        .list-row { display: flex; align-items: center; justify-content: space-between; background: #fafafa; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
+        .list-row { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; }
         .list-info { display: flex; align-items: center; gap: 12px; }
-        .list-img { width: 45px; height: 45px; object-fit: cover; border-radius: 8px; background: #eee; }
+        .list-img { width: 45px; height: 45px; object-fit: cover; border-radius: 5px; border: 1px solid #eee; }
         .list-name { font-size: 13px; font-weight: 600; color: #444; }
-        .cat-title { font-size: 11px; font-weight: 800; color: #999; margin: 15px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .cat-title { font-size: 11px; font-weight: 800; color: var(--gold-dark); margin: 15px 0 8px; text-transform: uppercase; background: #fff9e6; padding: 4px 10px; border-radius: 4px; display: inline-block; }
         
-        .status { font-size: 12px; text-align: center; color: var(--belgo); font-weight: bold; display: none; margin-bottom: 10px; }
-        label { font-size: 12px; font-weight: 600; color: #666; margin-left: 5px; }
+        .status { font-size: 12px; text-align: center; color: var(--gold-dark); font-weight: bold; display: none; margin-top: 5px; }
+        label { font-size: 12px; font-weight: 600; color: #666; display: block; margin-top: 10px; }
+        
+        .preview-logo { max-width: 100px; max-height: 50px; object-fit: contain; margin-bottom: 10px; display: block; border: 1px dashed #ccc; padding: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 style="text-align:center; color: var(--belgo); margin-bottom: 30px;">Belgo Manager</h1>
+    <h1 style="text-align:center; color: var(--gold-dark); font-family: 'Playfair Display', serif;">Jewellery Manager</h1>
 
     <div class="card">
-        <h2>⚙️ Logo Settings</h2>
-        <label>Upload Transparent PNG Logo</label>
-        <input type="file" id="logoFile" accept="image/png">
-        <button class="btn-green" id="logoBtn" onclick="uploadLogo()">Update Logo</button>
-        <div id="logoStatus" class="status">Updating Logo... Please wait.</div>
-    </div>
-
-    <div class="card pop-card">
-        <h2>⭐ Popular Items Slider</h2>
-        <input type="text" id="popName" placeholder="Item Name (e.g. Nutella Waffle)">
-        <label>Popular items show Name only (No Price)</label>
-        <input type="file" id="popFile" accept="image/*">
-        <button class="btn-orange" id="popBtn" onclick="addItem('popular')">Add to Slider</button>
-        <div id="popStatus" class="status">Uploading Item...</div>
-        
-        <div class="item-list">
-            <div class="cat-title">Active Slider Items</div>
-            <div id="popular-items-display">Loading list...</div>
+        <h2><i class="fas fa-image"></i> Shop Logo</h2>
+        <div id="currentLogoWrap">
+            <label>Current Logo:</label>
+            <img id="currentLogoImg" class="preview-logo" src="" alt="No Logo Set">
         </div>
+        <label>Upload New Logo (PNG preferred)</label>
+        <input type="file" id="logoFile" accept="image/*">
+        <button class="btn-gold" id="logoBtn" onclick="uploadLogo()">Update Store Logo</button>
+        <div id="logoStatus" class="status">Uploading Logo... Please wait.</div>
     </div>
 
     <div class="card">
-        <h2>🍴 Full Menu Management</h2>
-        <input type="text" id="itemName" placeholder="Item Name">
-        <input type="number" id="itemPrice" placeholder="Price (₹)">
-        <input type="text" id="itemCat" placeholder="Category (e.g. 01_Waffles)">
+        <h2><i class="fas fa-gem"></i> Manage Collection</h2>
+        <input type="text" id="itemName" placeholder="Item Name (e.g. Gold Necklace)">
+        <input type="number" id="itemPrice" placeholder="Price in ₹">
+        <input type="text" id="itemCat" placeholder="Category (e.g. 01_Necklaces)">
+        <label>Product Image</label>
         <input type="file" id="itemFile" accept="image/*">
-        <button class="btn-green" id="itemBtn" onclick="addItem('menu')">Add to Menu</button>
+        <button class="btn-gold" id="itemBtn" onclick="addItem()">Add to Collection</button>
         <div id="itemStatus" class="status">Uploading Item...</div>
 
         <div class="item-list">
-            <div class="cat-title">Menu Structure</div>
-            <div id="menu-items-display">Loading list...</div>
+            <div id="menu-items-display">Loading collection...</div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- 1. PASSWORD PROTECTION ---
-    const ADMIN_PASSWORD = "belgo@123"; // Change your password here
+    // --- AUTHENTICATION ---
+    const ADMIN_PASSWORD = "jewel@123"; 
     function checkAuth() {
-        const pass = prompt("Enter Admin Password:");
+        const pass = prompt("Admin Access Required:");
         if (pass !== ADMIN_PASSWORD) {
-            alert("Incorrect Password!");
+            alert("Unauthorized!");
             document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px; color:red;'>Access Denied</h2>";
-            window.location.href = "index.html";
         }
     }
     checkAuth();
 
-    // --- 2. FIREBASE CONFIG ---
+    // --- FIREBASE & IMGBB CONFIG ---
     const firebaseConfig = {
         apiKey: "AIzaSyB3qk4sGyqcbVX-OPG1ngEmgwmN83YYOcK",
         databaseURL: "https://belgo-menu-b2-default-rtdb.firebaseio.com",
@@ -103,30 +89,18 @@
     const db = firebase.database();
     const IMGBB_API = "53133c0e06337943f4b4f460d1805e01";
 
-    // --- 3. FETCH & DISPLAY DATA ---
+    // --- LOAD DATA ---
     function loadData() {
-        // Load Popular Items
-        db.ref('popular').on('value', snap => {
-            const data = snap.val();
-            const container = document.getElementById('popular-items-display');
-            container.innerHTML = data ? '' : 'No popular items added.';
-            for(let key in data) {
-                container.innerHTML += `
-                    <div class="list-row">
-                        <div class="list-info">
-                            <img src="${data[key].i}" class="list-img">
-                            <span class="list-name">${data[key].n}</span>
-                        </div>
-                        <button class="btn-red" onclick="deleteItem('popular', '${key}')">DEL</button>
-                    </div>`;
-            }
+        // Load Logo Preview
+        db.ref('settings/logo').on('value', snap => {
+            if(snap.exists()) document.getElementById('currentLogoImg').src = snap.val();
         });
 
-        // Load Menu Items
+        // Load Collection
         db.ref('menu').on('value', snap => {
             const data = snap.val();
             const container = document.getElementById('menu-items-display');
-            container.innerHTML = data ? '' : 'No menu items added.';
+            container.innerHTML = data ? '' : 'No items in collection.';
             for(let cat in data) {
                 container.innerHTML += `<div class="cat-title">${cat.replace(/^\d+_/, '')}</div>`;
                 for(let key in data[cat]) {
@@ -134,31 +108,32 @@
                         <div class="list-row">
                             <div class="list-info">
                                 <img src="${data[cat][key].i}" class="list-img">
-                                <span class="list-name">${data[cat][key].n} (₹${data[cat][key].p})</span>
+                                <span class="list-name">${data[cat][key].n} <br> <small>₹${data[cat][key].p.toLocaleString('en-IN')}</small></span>
                             </div>
-                            <button class="btn-red" onclick="deleteItem('menu/${cat}', '${key}')">DEL</button>
+                            <button class="btn-red" onclick="deleteItem('menu/${cat}', '${key}')">Remove</button>
                         </div>`;
                 }
             }
         });
     }
 
-    // --- 4. ACTION FUNCTIONS ---
+    // --- UTILITY: UPLOAD TO IMGBB ---
     async function uploadToImgBB(file) {
         const formData = new FormData();
         formData.append("image", file);
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API}`, { method: "POST", body: formData });
         const data = await res.json();
         if(data.success) return data.data.url;
-        throw new Error("Upload failed");
+        throw new Error("ImgBB Upload Failed");
     }
 
+    // --- ACTION: UPDATE LOGO ---
     async function uploadLogo() {
         const file = document.getElementById('logoFile').files[0];
-        if(!file) return alert("Please select a PNG logo!");
+        if(!file) return alert("Please select a file!");
+        
         const btn = document.getElementById('logoBtn');
         const status = document.getElementById('logoStatus');
-        
         btn.disabled = true;
         status.style.display = 'block';
 
@@ -168,43 +143,45 @@
             alert("Logo Updated Successfully!");
             location.reload();
         } catch(e) {
-            alert("Upload failed. Try again.");
+            alert("Logo upload failed.");
             btn.disabled = false;
         }
     }
 
-    async function addItem(type) {
-        const isPop = type === 'popular';
-        const name = document.getElementById(isPop ? 'popName' : 'itemName').value;
-        const price = isPop ? 0 : document.getElementById('itemPrice').value;
-        const cat = isPop ? 'popular' : document.getElementById('itemCat').value;
-        const file = document.getElementById(isPop ? 'popFile' : 'itemFile').files[0];
+    // --- ACTION: ADD ITEM ---
+    async function addItem() {
+        const name = document.getElementById('itemName').value;
+        const price = document.getElementById('itemPrice').value;
+        const cat = document.getElementById('itemCat').value;
+        const file = document.getElementById('itemFile').files[0];
         
-        if(!name || !file || (!isPop && (!price || !cat))) return alert("All fields are required!");
+        if(!name || !price || !cat || !file) return alert("All fields including Image are required!");
 
-        const btn = document.getElementById(isPop ? 'popBtn' : 'itemBtn');
-        const status = document.getElementById(isPop ? 'popStatus' : 'itemStatus');
-        
+        const btn = document.getElementById('itemBtn');
+        const status = document.getElementById('itemStatus');
         btn.disabled = true;
         status.style.display = 'block';
 
         try {
             const url = await uploadToImgBB(file);
-            const itemData = { n: name, i: url };
-            if(!isPop) itemData.p = parseInt(price);
+            const itemData = { 
+                n: name, 
+                p: parseInt(price), 
+                i: url 
+            };
             
-            await db.ref(isPop ? 'popular' : 'menu/' + cat).push(itemData);
-            alert("Item Added!");
+            await db.ref('menu/' + cat).push(itemData);
+            alert("New Item Added to Collection!");
             location.reload();
         } catch(e) {
-            alert("Error uploading item.");
+            alert("Error adding item.");
             btn.disabled = false;
             status.style.display = 'none';
         }
     }
 
     async function deleteItem(path, id) {
-        if(confirm("Delete this item permanently?")) {
+        if(confirm("Permanently remove this item?")) {
             await db.ref(path + '/' + id).remove();
         }
     }
@@ -213,4 +190,3 @@
 </script>
 </body>
 </html>
-
