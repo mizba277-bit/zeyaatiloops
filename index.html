@@ -18,7 +18,7 @@
         header { 
             background: rgba(255,255,255,0.95); 
             backdrop-filter: blur(10px); 
-            padding: 15px 20px; 
+            padding: 10px 15px; 
             position: sticky; 
             top: 0; 
             z-index: 1000; 
@@ -27,24 +27,19 @@
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
         }
-        .logo-wrapper { text-align: center; }
-        .logo-wrapper img { max-height: 45px; display: block; margin: 0 auto; }
+        .logo-wrapper img { max-height: 40px; display: block; margin: 0 auto; }
 
-        /* Actions Left & Right */
-        .header-left { display: flex; align-items: center; }
-        .header-right { display: flex; align-items: center; justify-content: flex-end; }
-
-        /* Search Animation */
-        .search-box { display: flex; align-items: center; position: relative; }
+        /* Search & Cart Actions */
+        .search-box { display: flex; align-items: center; }
         .search-input { 
             width: 0; padding: 0; border: none; outline: none; 
             transition: 0.4s; background: #f0f0f0; border-radius: 20px;
             font-size: 0.8rem;
         }
-        .search-box.active .search-input { width: 120px; padding: 6px 12px; margin-left: 10px; }
+        .search-box.active .search-input { width: 100px; padding: 6px 12px; margin-left: 8px; }
         .search-btn { font-size: 1.1rem; cursor: pointer; color: #1a1a1a; }
 
-        .top-cart-btn { position: relative; font-size: 1.3rem; cursor: pointer; }
+        .top-cart-btn { position: relative; font-size: 1.3rem; cursor: pointer; display: flex; justify-content: flex-end; }
         .top-cart-badge { 
             position: absolute; top: -5px; right: -8px; 
             background: var(--gold); color: black; font-size: 0.6rem; 
@@ -53,39 +48,44 @@
 
         /* Trending Section */
         @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .trending-section { background: var(--white); padding: 15px 0; overflow: hidden; border-bottom: 1px solid #eee; }
+        .trending-section { background: var(--white); padding: 12px 0; overflow: hidden; border-bottom: 1px solid #eee; }
         .trending-track { display: flex; width: max-content; animation: slide 40s linear infinite; }
-        .trending-card { width: 130px; margin: 0 10px; background: #fff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .trending-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px 12px 0 0; }
+        .trending-card { width: 120px; margin: 0 8px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex-shrink: 0; }
+        .trending-img { width: 100%; height: 110px; object-fit: contain; background: #f9f9f9; border-radius: 10px 10px 0 0; }
 
-        /* Swipable Product Grid */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 15px; }
-        .product-card { background: var(--white); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
+        /* Fixed Image Scaling for Product Grid */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 12px; }
+        .product-card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         
         .card-swipe-container { 
             width: 100%; height: 180px; overflow-x: auto; 
             display: flex; scroll-snap-type: x mandatory; scrollbar-width: none;
+            background: #fdfdfd; /* Light background for non-matching images */
         }
         .card-swipe-container::-webkit-scrollbar { display: none; }
-        .swipe-slide { min-width: 100%; height: 100%; scroll-snap-align: start; flex-shrink: 0; }
-        .swipe-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .swipe-slide { min-width: 100%; height: 100%; scroll-snap-align: start; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        
+        /* Updated Image fit to prevent zoom */
+        .swipe-slide img { width: 100%; height: 100%; object-fit: contain; }
 
-        .product-info { padding: 10px; text-align: center; }
-        .add-btn { background: var(--gold); color: white; border: none; width: 100%; padding: 10px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.8rem; margin-top: 5px; }
+        .product-info { padding: 8px; text-align: center; }
+        .add-btn { background: var(--gold); color: white; border: none; width: 100%; padding: 10px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.75rem; margin-top: 5px; }
 
-        /* Modal with Photos */
+        /* Cart Modal with Thumbnails */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; position: relative; }
-        .cart-item-row { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .cart-item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; }
+        .cart-item-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .cart-item-row img { width: 45px; height: 45px; border-radius: 6px; object-fit: contain; background: #f0f0f0; }
         .cart-item-info { flex: 1; }
-        .cart-item-info h5 { margin: 0; font-size: 0.85rem; }
-        .cart-item-info p { margin: 2px 0; font-size: 0.8rem; font-weight: 700; color: var(--gold-dark); }
+        .cart-item-info h5 { margin: 0; font-size: 0.8rem; line-height: 1.2; }
+        .cart-item-info p { margin: 2px 0; font-size: 0.75rem; font-weight: 700; color: var(--gold-dark); }
 
-        /* Fly Animation */
-        .fly-item { position: fixed; z-index: 9999; width: 50px; height: 50px; object-fit: cover; border-radius: 50%; pointer-events: none; transition: all 0.7s cubic-bezier(0.42, 0, 0.58, 1); border: 2px solid var(--gold); }
+        .fly-item { position: fixed; z-index: 9999; width: 40px; height: 40px; object-fit: contain; border-radius: 50%; pointer-events: none; transition: all 0.7s ease-in-out; border: 1px solid var(--gold); background: white; }
 
-        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
+        @media (max-width: 480px) { 
+            .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+            .card-swipe-container { height: 160px; } /* Slightly shorter for mobile screens */
+        }
     </style>
 </head>
 <body>
@@ -97,8 +97,7 @@
             <input type="text" id="searchInput" class="search-input" placeholder="Search..." onkeyup="searchMenu()">
         </div>
     </div>
-    <div class="logo-wrapper" id="logoPlace">
-        </div>
+    <div class="logo-wrapper" id="logoPlace"></div>
     <div class="header-right">
         <div class="top-cart-btn" onclick="toggleCart()" id="topCartIcon">
             <i class="fas fa-shopping-bag"></i>
@@ -108,7 +107,7 @@
 </header>
 
 <div class="trending-section" id="trendingSection" style="display:none;">
-    <h5 style="text-align:center; font-family:'Playfair Display'; margin: 0 0 10px 0; color:var(--gold-dark);">Trending Styles</h5>
+    <p style="text-align:center; font-family:'Playfair Display'; margin: 0 0 8px 0; color:var(--gold-dark); font-weight: 700; font-size: 0.9rem;">Trending Styles</p>
     <div class="trending-track" id="trendingTrack"></div>
 </div>
 
@@ -116,12 +115,12 @@
 
 <div id="cart-modal" class="modal" onclick="closeModals(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h3 style="font-family:'Playfair Display'; margin-top:0;">Your Selection</h3>
+        <h3 style="font-family:'Playfair Display'; margin-top:0; font-size: 1.2rem;">Your Bag</h3>
         <div id="cart-items-list" style="max-height: 350px; overflow-y: auto;"></div>
-        <div style="display:flex; justify-content:space-between; font-weight:800; margin-top:15px; border-top: 1px solid #eee; padding-top:10px;">
+        <div style="display:flex; justify-content:space-between; font-weight:800; margin-top:15px; border-top: 1px solid #eee; padding-top:10px; font-size: 0.9rem;">
             <span>Total:</span> <span>₹<span id="total-price">0</span></span>
         </div>
-        <button onclick="sendWhatsAppOrder()" style="background:#25D366; color:white; width:100%; padding:15px; border-radius:15px; border:none; margin-top:15px; font-weight:700; cursor:pointer;">WhatsApp Order</button>
+        <button onclick="sendWhatsAppOrder()" style="background:#25D366; color:white; width:100%; padding:14px; border-radius:12px; border:none; margin-top:15px; font-weight:700; cursor:pointer; font-size: 0.9rem;">Order on WhatsApp</button>
     </div>
 </div>
 
@@ -149,7 +148,7 @@
         const track = document.getElementById('trendingTrack');
         let html = '';
         Object.values(data).forEach(item => {
-            html += `<div class="trending-card"><img src="${item.i}" class="trending-img"><div style="padding:8px; font-size:0.65rem; text-align:center; font-weight:600;">${item.n}</div></div>`;
+            html += `<div class="trending-card"><img src="${item.i}" class="trending-img"><div style="padding:6px; font-size:0.6rem; text-align:center; font-weight:600;">${item.n}</div></div>`;
         });
         track.innerHTML = html + html;
     }
@@ -158,20 +157,20 @@
         const container = document.getElementById('menu-content');
         container.innerHTML = '';
         Object.keys(data).sort().forEach(cat => {
-            let catHtml = `<h4 style="margin:20px 15px 10px; border-left:4px solid var(--gold); padding-left:10px; font-weight:800;">${cat.replace(/^\d+_/, '')}</h4><div class="product-grid">`;
+            let catHtml = `<h5 style="margin:20px 15px 10px; border-left:3px solid var(--gold); padding-left:10px; font-weight:800; font-size:0.95rem;">${cat.replace(/^\d+_/, '')}</h5><div class="product-grid">`;
             Object.keys(data[cat]).forEach(key => {
                 const item = data[cat][key];
                 const isSold = item.s === false;
                 const imgs = item.images || [item.i];
                 catHtml += `
-                    <div class="product-card ${isSold ? 'is-sold-out' : ''}">
+                    <div class="product-card ${isSold ? 'opacity:0.6' : ''}">
                         <div class="card-swipe-container">
                             ${imgs.map(img => `<div class="swipe-slide"><img src="${img}"></div>`).join('')}
                         </div>
                         <div class="product-info">
-                            <div style="font-size:0.75rem; font-weight:600; height:32px; overflow:hidden;">${item.n}</div>
-                            <div style="color:var(--gold-dark); font-weight:700; margin:5px 0;">₹${item.p.toLocaleString()}</div>
-                            ${isSold ? '<div style="color:red;font-size:0.7rem;">Sold Out</div>' : `<button class="add-btn" onclick="flyToCart(this, '${imgs[0]}'); addToCart('${item.n}', ${item.p}, '${imgs[0]}')">Add to Bag</button>`}
+                            <div style="font-size:0.75rem; font-weight:600; height:32px; overflow:hidden; line-height:1.2;">${item.n}</div>
+                            <div style="color:var(--gold-dark); font-weight:700; margin:5px 0; font-size:0.85rem;">₹${item.p.toLocaleString()}</div>
+                            ${isSold ? '<div style="color:red;font-size:0.65rem;font-weight:700;">SOLD OUT</div>' : `<button class="add-btn" onclick="flyToCart(this, '${imgs[0]}'); addToCart('${item.n}', ${item.p}, '${imgs[0]}')">Add to Bag</button>`}
                         </div>
                     </div>`;
             });
@@ -203,10 +202,10 @@
                 <div class="cart-item-row">
                     <img src="${item.img}">
                     <div class="cart-item-info">
-                        <h5>${name} (x${item.qty})</h5>
-                        <p>₹${(item.price * item.qty).toLocaleString()}</p>
+                        <h5>${name}</h5>
+                        <p>₹${(item.price * item.qty).toLocaleString()} (x${item.qty})</p>
                     </div>
-                    <i class="fas fa-trash" style="color:#ff4757; cursor:pointer;" onclick="removeFromCart('${name}')"></i>
+                    <i class="fas fa-trash-alt" style="color:#ff4757; cursor:pointer; font-size:0.9rem;" onclick="removeFromCart('${name}')"></i>
                 </div>`;
         }
         document.getElementById('total-price').innerText = total.toLocaleString();
@@ -241,7 +240,8 @@
     }
 
     function sendWhatsAppOrder() {
-        let msg = "*Order - Zeyaati Loops*%0A%0A";
+        if(Object.keys(cart).length === 0) return alert("Your bag is empty!");
+        let msg = "*New Order - Zeyaati Loops*%0A%0A";
         for (const [name, item] of Object.entries(cart)) msg += `- ${name} (x${item.qty})%0A`;
         msg += `%0A*Total: ₹${document.getElementById('total-price').innerText}*`;
         window.open(`https://wa.me/919876543210?text=${msg}`, '_blank');
