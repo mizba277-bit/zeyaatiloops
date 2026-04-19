@@ -28,14 +28,12 @@
         .top-cart-btn { position: relative; font-size: 1.3rem; cursor: pointer; text-align: right; z-index: 1001; }
         .top-cart-badge { position: absolute; top: -5px; right: -8px; background: var(--gold); color: black; font-size: 0.6rem; font-weight: 800; padding: 2px 5px; border-radius: 50%; min-width: 17px; }
 
-        /* Trending Section */
         .trending-section { background: var(--white); padding: 12px 0; overflow: hidden; border-bottom: 1px solid #eee; }
         .trending-track { display: flex; width: max-content; animation: slideScroll 40s linear infinite; }
         .trending-card { width: 100px; margin: 0 8px; text-align: center; flex-shrink: 0; }
         .trending-img { width: 100%; aspect-ratio: 1/1; object-fit: contain; background: #f9f9f9; border-radius: 50%; border: 1px solid #eee; }
         @keyframes slideScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* Product Grid & Fixed Square Images */
         .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 12px; }
         .product-card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); position: relative; }
         
@@ -52,7 +50,6 @@
         .product-price { color: var(--gold-dark); font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; }
         .add-btn { background: var(--gold); color: white; border: none; width: 100%; padding: 10px; border-radius: 20px; font-weight: 700; cursor: pointer; }
 
-        /* Fly Animation Item */
         .fly-item { 
             position: fixed; z-index: 9999; object-fit: contain; 
             pointer-events: none; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
@@ -63,6 +60,34 @@
         .modal-content { background: white; width: 92%; max-width: 400px; padding: 20px; border-radius: 20px; }
         .cart-item-row { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .cart-item-row img { width: 45px; height: 45px; object-fit: contain; }
+
+        .order-form input, .order-form textarea {
+            width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px;
+        }
+
+        /* Premium Toast Style */
+        #error-toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10000;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            white-space: nowrap;
+            border: 1px solid var(--gold);
+        }
+        #error-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -87,13 +112,27 @@
 <div id="cart-modal" class="modal" onclick="closeModals(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <h3 style="font-family:'Playfair Display'; margin-top:0;">Your Bag</h3>
-        <div id="cart-items-list" style="max-height: 300px; overflow-y: auto;"></div>
-        <div style="display:flex; justify-content:space-between; font-weight:800; margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+        <div id="cart-items-list" style="max-height: 180px; overflow-y: auto;"></div>
+        
+        <div style="display:flex; justify-content:space-between; font-weight:800; margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
             <span>Total:</span> <span>₹<span id="total-price">0</span></span>
         </div>
-        <button onclick="sendWhatsAppOrder()" style="background:#25D366; color:white; width:100%; padding:14px; border-radius:12px; border:none; margin-top:15px; font-weight:700;">Order on WhatsApp</button>
+
+        <div class="order-form" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+            <p style="font-size: 0.8rem; font-weight: 700; margin-bottom: 8px; color: #555;">DELIVERY DETAILS</p>
+            <input type="text" id="custName" placeholder="Full Name">
+            <input type="tel" id="custPhone" placeholder="WhatsApp Number">
+            <textarea id="custAddress" placeholder="Address & Landmark" rows="2"></textarea>
+            <input type="number" id="custPincode" placeholder="Pincode" pattern="\d{6}">
+        </div>
+
+        <button onclick="sendWhatsAppOrder()" style="background:#25D366; color:white; width:100%; padding:14px; border-radius:12px; border:none; margin-top:10px; font-weight:700; cursor:pointer;">
+            <i class="fab fa-whatsapp"></i> Confirm & Order
+        </button>
     </div>
 </div>
+
+<div id="error-toast">Please fill all details</div>
 
 <script>
     const firebaseConfig = {
@@ -165,29 +204,22 @@
     function stopAutoSlide(cardId) { clearInterval(slideIntervals[cardId]); }
 
     function handleAddToCart(btn, cardId, name, price) {
-        const imgElement = document.getElementById(`img-${cardId}`);
+        const imgElement = document.querySelector(`#scroll-${cardId} img`);
         const cartIcon = document.getElementById('topCartIcon');
         
-        // Fly Animation Logic
         const flyImg = document.createElement('img');
         flyImg.src = imgElement.src;
         flyImg.className = 'fly-item';
-        
         const rect = imgElement.getBoundingClientRect();
-        flyImg.style.top = rect.top + 'px';
-        flyImg.style.left = rect.left + 'px';
-        flyImg.style.width = rect.width + 'px';
-        flyImg.style.height = rect.height + 'px';
+        flyImg.style.top = rect.top + 'px'; flyImg.style.left = rect.left + 'px';
+        flyImg.style.width = rect.width + 'px'; flyImg.style.height = rect.height + 'px';
         document.body.appendChild(flyImg);
         
         const cartRect = cartIcon.getBoundingClientRect();
-        
         setTimeout(() => {
             flyImg.style.top = (cartRect.top + 5) + 'px';
             flyImg.style.left = (cartRect.left + 5) + 'px';
-            flyImg.style.width = '20px';
-            flyImg.style.height = '20px';
-            flyImg.style.opacity = '0.2';
+            flyImg.style.width = '20px'; flyImg.style.height = '20px'; flyImg.style.opacity = '0.2';
         }, 50);
 
         setTimeout(() => {
@@ -217,6 +249,7 @@
     function toggleCart() { const m = document.getElementById('cart-modal'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
     function closeModals(e) { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; }
     function toggleSearch() { document.getElementById('searchBox').classList.toggle('active'); }
+
     function searchMenu() {
         const q = document.getElementById('searchInput').value.toLowerCase();
         const filtered = {};
@@ -226,11 +259,53 @@
         });
         renderMenu(filtered);
     }
+
+    // New Toast Function
+    function showToast(message) {
+        const toast = document.getElementById('error-toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
     function sendWhatsAppOrder() {
-        if(Object.keys(cart).length === 0) return;
-        let msg = "*Zeyaati Loops - New Order*%0A%0A";
-        for (const [name, item] of Object.entries(cart)) msg += `- ${name} (x${item.qty})%0A`;
-        window.open(`https://wa.me/917025402526?text=${msg}%0ATotal: ₹${document.getElementById('total-price').innerText}`, '_blank');
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const address = document.getElementById('custAddress').value.trim();
+        const pincode = document.getElementById('custPincode').value.trim();
+
+        if(Object.keys(cart).length === 0) { 
+            showToast("🛍️ Your bag is empty!"); 
+            return; 
+        }
+        if(!name || !phone || !address || !pincode) { 
+            showToast("✨ Please fill in all delivery details"); 
+            return; 
+        }
+        if(pincode.length !== 6) {
+            showToast("📍 Please enter a valid 6-digit pincode");
+            return;
+        }
+
+        let msg = "*Zeyaati Loops - NEW ORDER*%0A";
+        msg += "--------------------------%0A";
+        msg += `*Name:* ${name}%0A`;
+        msg += `*Phone:* ${phone}%0A`;
+        msg += `*Address:* ${address}%0A`;
+        msg += `*Pincode:* ${pincode}%0A`;
+        msg += "--------------------------%0A%0A";
+        msg += "*Order Items:*%0A";
+
+        for (const [itemName, item] of Object.entries(cart)) {
+            msg += `- ${itemName} (x${item.qty}) - ₹${(item.price * item.qty).toLocaleString()}%0A`;
+        }
+
+        const total = document.getElementById('total-price').innerText;
+        msg += `%0A*Grand Total: ₹${total}*`;
+
+        window.open(`https://wa.me/917025402526?text=${msg}`, '_blank');
     }
 </script>
 </body>
